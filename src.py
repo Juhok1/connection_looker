@@ -55,7 +55,7 @@ def collect_data():  #function for collecting data that has to be saved
     
 def look_info(): # Function for looking contacts
     company = input("Anna sen yrityksen nimi, jonka kontakteja etsit: ")
-    result = db.execute("SELECT etunimi, sukunimi, titteli, sposti FROM yritysten_tiedot WHERE nimi = (?)", [company]).fetchall()
+    result = db.execute("SELECT etunimi, sukunimi, titteli, sposti FROM yritysten_tiedot WHERE LOWER(nimi) LIKE LOWER(?)", [f"%{company}%"]).fetchall()
     print(result)
 
 # main
@@ -67,10 +67,17 @@ def main():
 
             print("Anna vastauksena T tai E ")
             continue
-        break
-    if question.__eq__("T"): #User wants to put data
-        collect_data()
-    elif question.__eq__("E"):  #User wants to look contact
-        look_info()
+    
+        if question.__eq__("T"): #User wants to put data
+            collect_data()
+        elif question.__eq__("E"):  #User wants to look contact
+            look_info()
+        question2 = input("Haluatko lisätä muita tietoja tai lukea tietoja? Kirjoita K/E ").upper()
+
+        if question2.__eq__("K"):
+            continue  # Let's go back to line 64
+        if question2.__eq__("E"):
+            break  #Breaking main
+
 
 print(main())
